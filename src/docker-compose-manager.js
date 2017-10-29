@@ -89,7 +89,18 @@ module.exports = {
      * @param {object} processOpt - child_process.spawn options.
      * @return {Promise} A promise.
      */
-    dockerInspectPortOfContainer: dockerInspectPortOfContainer
+    dockerInspectPortOfContainer: dockerInspectPortOfContainer,
+
+    /**
+     * Docker run command. This execute a command on the container given
+     * @param {string} file - The file with docker-componse that will be upped.
+     * @param {string} service - The service where for command will be executed.
+     * @param {object} exec_command - The command will be executed (optional)
+     * @param {string} args - Arguments object.
+     * @param {object} processOpt - child_process.spawn options.
+     * @return {Promise} A promise.
+     */
+    dockerComposeRun: dockerComposeRun,
 };
 
 function dockerComposeUp(file, args, processOpt) {
@@ -218,6 +229,26 @@ function dockerInspectPortOfContainer(container, processOpt) {
             child.stderr.on('data', data => out += data.toString());
             child.on('close', code => {
                 if (!code) resolve(out.toString('utf-8').replace(/(?:\r\n|\r|\n)/g, '').split("[")[1].split("/")[0].replace(/'/ig, ''));
+                else reject({code: code, err: out});
+            });
+        });
+    });
+}
+
+function dockerComposeRun(file, service, exec_command, args, processOpt) {
+    return new Promise((resolve, reject) => {
+        args = args ? args : [];
+        exec_command = exec_command ? exec_command : '';
+        var command = 'docker-compose';
+
+        var arg = ['-f', file, 'run', service, exec_command].concat(args);
+        var out = "";
+
+        cmd.execCommand(command, arg, processOpt).then(child => {
+            child.stdout.on('data', data => out += data.toString());
+            child.stderr.on('data', data => out += data.toString());
+            child.on('close', code => {
+                if (!code) resolve(out);
                 else reject({code: code, err: out});
             });
         });

@@ -37,7 +37,7 @@ module.exports = {
      */
     execCommand: (command, args, options) => {
         if (typeof options === 'undefined') {
-            options = {}
+            options = {};
         }
 
         return new Promise((resolve, reject) => {

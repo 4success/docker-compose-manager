@@ -35,6 +35,13 @@ describe('Docker compose manager Module tests', function () {
 
     });
 
+    it('The module exposes "dockerComposeRun" function', () => {
+
+        var result = module.dockerComposeRun;
+        expect(result).to.not.be.equal(undefined);
+
+    });
+
     it('The module exposes "dockerComposeDown" function', () => {
 
         var result = module.dockerComposeDown;
@@ -80,13 +87,15 @@ describe('Docker compose manager Module tests', function () {
     it('Functions sequence', done => {
         var file = __dirname + '/../docker-compose.yaml';
         module.dockerComposeUp(file).then(() => {
+            return module.dockerComposeRun(file, 'mongo', '/bin/bash echo OK');
+        }).then(() => {
             return module.dockerComposeStop(file);
         }).then(() => {
             return module.dockerComposeStart(file);
         }).then(() => {
             return module.dockerExec('tests_mongo_1', ['mongo', '--version']);
         }).then(() => {
-            return module.dockerInspectIPAddressOfContainer('tests_mongo_1', { network: "tests_default" }).then(ip => {
+            return module.dockerInspectIPAddressOfContainer('tests_mongo_1', {network: "tests_default"}).then(ip => {
                 expect(ip).to.be.equal('172.18.0.2');
             });
         }).then(() => {

@@ -15,6 +15,7 @@ npm i docker-composer-manager --save
 5. [dockerExec](#dockerexec)
 6. [dockerInspectIPAddressOfContainer](#dockerinspectipaddressofcontainer)
 7. [dockerInspectPortOfContainer](#dockerinspectportofcontainer)
+7. [dockerComposeRun](#dockerComposeRun)
 
 ### DockerComposeUp 
 
@@ -187,6 +188,35 @@ var dcManager = require('docker-compose-manager'),
 
 dcManager.dockerInspectPortOfContainer(container).then(port => {
     console.log(port);
+}, err=>{
+    console.error(err);
+});
+```
+
+### dockerComposeRun
+
+This method receives a container name and the command will be executed inside of it, and execute `docker-compose run` command with command string given.
+
+#### Parameters
+
+  Name | Type | Description 
+    -----|------|-------------
+    **file** | `string` | **Required.** The file where the service is described.
+    **service** | `string` | **Required.** The service for the command will be executed.
+    **exec_command** | `[string]` | **Required.** The command which will be executed.
+    **args** | `[string]` | **Optional.** Docker-Compose run commad [options](https://docs.docker.com/compose/reference/run/).
+    **options** | `[string]` | **Optional.** NodeJS child_process.spawn [options](https://nodejs.org/docs/latest-v6.x/api/child_process.html#child_process_child_process_spawn_command_args_options).
+
+#### Example
+
+```javascript
+var dcManager = require('docker-compose-manager'),
+    file = __dirname + '/docker-compose.yaml',
+    container = 'node_container_01',
+    command = ['bash'];
+
+dcManager.dockerComposeRun(file, container, command).then(out => {
+    console.log(out);
 }, err=>{
     console.error(err);
 });
