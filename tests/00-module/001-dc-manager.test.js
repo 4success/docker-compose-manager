@@ -70,6 +70,13 @@ describe('Docker compose manager Module tests', function () {
 
     });
 
+    it('The module exposes "dockerComposeExec" function', () => {
+
+        var result = module.dockerComposeExec;
+        expect(result).to.not.be.equal(undefined);
+
+    });
+
     it('The module exposes "dockerInspectIPAddressOfContainer" function', () => {
 
         var result = module.dockerInspectIPAddressOfContainer;
